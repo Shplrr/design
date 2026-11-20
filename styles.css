@@ -104,3 +104,6 @@ footer { font-size: 12px; color: #727370; padding: 24px 0 4px; margin-top: 65px;
   .gallery { grid-template-columns: minmax(0,1fr); }
 }
 .gallery > a > span { white-space: nowrap; }
+
+.phone-slides .case-figure > a { display: grid; place-items: center; background: #f5f5f4; border-radius: 8px; padding: 20px; }
+.phone-slides .case-figure img { width: 100%; height: min(740px, 75svh); object-fit: contain; }

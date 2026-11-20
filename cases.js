@@ -82,11 +82,19 @@ const artwork = {
   },
   drinkit: {
     cover: 'drinkit-menu',
-    hero: ['drinkit-title', 'Дринкит × вкус. Концепция персонального сервиса'],
-    research: ['drinkit-menu', 'Вход в сервис из меню приложения'],
+    hero: ['drinkit-fig-193', 'Дринкит × вкус. Концепция персонального сервиса'],
+    research: ['drinkit-fig-208', 'Вход во вкусовой портрет из меню приложения.'],
     slides: [
-      ['drinkit-profile', 'Вкусовой портрет объединяет четыре характеристики заказанных напитков.'],
-      ['drinkit-map', 'Карта показывает, какие вкусы уже открыты, и предлагает попробовать следующий.']
+      ['drinkit-fig-651', 'Как кислотность, горечь, добавки и крепость меняют рисунок.'],
+      ['drinkit-fig-258', 'На главном экране портрета четыре характеристики складываются в узор.'],
+      ['drinkit-fig-308', 'Кнопка «Подробнее» раскрывает предпочтения и любимые продукты.'],
+      ['drinkit-fig-413', 'Карта вкуса предлагает открыть новый напиток.']
+    ],
+    screens: [
+      ['drinkit-screen-8', 'Меню приложения'],
+      ['drinkit-screen-27', 'Вкусовой портрет и персональные рекомендации'],
+      ['drinkit-screen-363', 'Детали вкусового профиля'],
+      ['drinkit-screen-85', 'Карта вкуса']
     ]
   },
   swan: {
@@ -111,8 +119,8 @@ const artwork = {
 
 const details = {
   drinkit: [
-    ['У вашей музыки есть цвет. А у кофе?', 'В Яндекс Музыке меня заинтересовало, как цвет может рассказать человеку о его собственных предпочтениях. У Tasty Coffee я взяла другую идею — обозначать вкус графикой. Так появился «вкусовой портрет»: мне хотелось, чтобы человек узнавал в рисунке именно свои заказы. Градиенты в нём перетекают друг в друга, как вкусы, которые со временем смешиваются и меняются.', 'drinkit-motion', 'Поиск визуального языка портрета: цвет, ритм и движение.'],
-    ['Что меняется после следующего заказа', 'В карточке напитка видны его собственные характеристики, а в профиле складывается история всех покупок. Чтобы новый раздел ощущался частью Дринкита, для узора я использовала китошрифт бренда. Карту задумала как игру: новый напиток открывает ещё один участок. Вдохновлялась китбоксами в самом Дринките и тем, как постепенно открывается карта в Genshin Impact.', 'drinkit-pattern', 'Знаки китошрифта и вкусовые параметры в карточке напитка.']
+    ['У вашей музыки есть цвет. А у кофе?', 'В Яндекс Музыке меня заинтересовало, как цвет может рассказать человеку о его собственных предпочтениях. У Tasty Coffee я взяла другую идею — обозначать вкус графикой. Так появился «вкусовой портрет»: мне хотелось, чтобы человек узнавал в рисунке именно свои заказы. Градиенты в нём перетекают друг в друга, как вкусы, которые со временем смешиваются и меняются.', 'drinkit-fig-671', 'Поиск визуального языка портрета: цвет, ритм и движение.'],
+    ['Что меняется после следующего заказа', 'В карточке напитка видны его собственные характеристики, а в профиле складывается история всех покупок. Чтобы новый раздел ощущался частью Дринкита, для узора я использовала китошрифт бренда. Карту задумала как игру: новый напиток открывает ещё один участок. Вдохновлялась китбоксами в самом Дринките и тем, как постепенно открывается карта в Genshin Impact.', 'drinkit-fig-607', 'Переход из профиля и вкусовые характеристики в карточке напитка.']
   ],
   swan: [
     ['Откуда в афише взялось кружево', 'Несколько участников опроса вспомнили «Чёрного лебедя». Это подсказало мне, что входом в историю может стать напряжение триллера. Кружево связало два образа: костюм балерины и вязаную салфетку на старом телевизоре. Поэтому я поместила его рядом с экранными помехами и резкими переходами.', 'swan-lace', 'Кружевная рамка вокруг вступительного текста.'],
@@ -208,6 +216,7 @@ function showProject(project) {
     <section><h3>${project.decisionTitle}</h3><p>${project.decision}</p></section>
     <div class="case-slides">${illustration(art.slides[0])}</div>
     ${detailBlock(details[project.id][1])}
+    ${art.screens ? `<section><h3>Экраны приложения</h3><div class="case-slides phone-slides">${illustration(art.screens[0])}</div></section>` : ''}
     ${project.id === 'swan' ? '<video controls playsinline preload="none" poster="assets/cases/swan-poster.webp" aria-label="Видеопрезентация промостраницы" src="assets/swan.mp4"></video>' : ''}
     <section><h3>Результат</h3><p>${project.outcome}</p></section>
     ${project.source ? `<p class="links"><a href="${project.source}">Полный кейс на Behance ↗</a></p>` : ''}
@@ -216,22 +225,27 @@ function showProject(project) {
       <div class="gallery">${following.map(projectCard).join('')}</div>
     </section>`;
   observePreviews(document.querySelector('[data-view="case"]'));
-  if (art.slides.length < 2) return;
-  const figure = document.querySelector('.case-slides figure');
+  const figures = document.querySelectorAll('.case-slides figure');
+  setupSlider(figures[0], art.slides);
+  if (art.screens) setupSlider(figures[1], art.screens);
+}
+
+function setupSlider(figure, slides) {
+  if (slides.length < 2) return;
   const label = figure.querySelector('figcaption span');
   label.setAttribute('aria-live', 'polite');
   label.insertAdjacentHTML('afterend', '<div class="slide-controls"><button type="button" aria-label="Предыдущий экран">←</button><small></small><button type="button" aria-label="Следующий экран">→</button></div>');
   let index = 0;
   function selectSlide(step) {
-    index = (index + step + art.slides.length) % art.slides.length;
-    const [file, caption] = art.slides[index];
+    index = (index + step + slides.length) % slides.length;
+    const [file, caption] = slides[index];
     const path = 'assets/cases/' + file + '.webp';
     figure.querySelector('a').href = path;
     const image = figure.querySelector('img');
     image.src = path;
     image.alt = caption;
     label.textContent = caption;
-    figure.querySelector('small').textContent = (index + 1) + ' / ' + art.slides.length;
+    figure.querySelector('small').textContent = (index + 1) + ' / ' + slides.length;
   }
   const [previous, nextButton] = figure.querySelectorAll('button');
   previous.onclick = () => selectSlide(-1);
